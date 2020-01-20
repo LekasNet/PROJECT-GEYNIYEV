@@ -2,10 +2,20 @@ from pygame.locals import *
 import pygame
 from random import randint
 import sys
+import statistic_db
+import datetime
 
 
 class FlappyBird:
     def __init__(self):
+        a, b = statistic_db.return_status("FlappyOsip")
+        print(b)
+        self.subject = "FlappyOsip"
+        self.set_score = 0
+        self.score = statistic_db.high_score(b, self.subject)
+        self.start_time = datetime.datetime.now().strftime("%H:%M:%S")
+        self.flag = False
+
         self.screen = pygame.display.set_mode((400, 635))
         self.bird = pygame.Rect(65, 50, 50, 50)
 
@@ -27,6 +37,7 @@ class FlappyBird:
         self.counter = 0
         self.height = randint(-110, 300)
 
+
     def updateWalls(self):
         self.X_axis -= 2 # стены... они двигаются
         if self.X_axis < -100: # Когда стена уходит за край экрана она
@@ -34,6 +45,7 @@ class FlappyBird:
             self.X_axis = 410
             self.counter += 1 # счёт
             self.height = randint(-110, 300)
+
 
     def cycle(self):
         # А вот тут симуляция физики с поправкой на баланс
@@ -57,17 +69,26 @@ class FlappyBird:
                                self.dWall.get_width() - 10,
                                self.dWall.get_height())
         # Смэрть
-        if uRect.colliderect(self.bird) or dRect.colliderect(self.bird):
+        if uRect.colliderect(self.bird):
+            self.dead = True
+        # Смэрть
+        if dRect.colliderect(self.bird):
             self.dead = True
 
         if not 0 < self.bird[1] < 720: # если улетела - возраждаем
             self.bird[1] = 50
             self.Y_axis = 50
             self.dead = False
+            if self.set_score < self.counter:
+                self.set_score = self.counter
+            if self.set_score > self.score:
+                self.score = self.set_score
             self.counter = 0
             self.X_axis = 410
             self.height = randint(-110, 110)
             self.gravitation = 5
+            self.flag = False
+
 
     def run(self):
         clock = pygame.time.Clock()
@@ -77,14 +98,40 @@ class FlappyBird:
         while True:
             clock.tick(60)
 
+            if not self.flag:
+                self.screen.fill((255, 255, 255))
+                self.screen.blit(self.background, (0, 0))
+                self.screen.blit(font.render("press any button",
+                                             -1,
+                                             (255, 255, 255)),
+                                 (70, 50))
+                self.screen.blit(font.render("high score: " + str(self.score),
+                                             -1,
+                                             (255, 255, 255)),
+                                 (100, 150))
+                pygame.display.update()
+
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    now = datetime.datetime.now().strftime("%H:%M:%S")
+                    # Время на момент завершения программы
+                    if self.set_score < self.score:
+                        self.set_score = self.score
+                    statistic_db.times(self.start_time, self.set_score, now, self.subject)
                     sys.exit()
+
+                if (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN):
+                    self.flag = True
 
                 if (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN) and not self.dead:
                     self.jAmplifer = 10
                     self.gravitation = 5
                     self.jSpeed = 10
+
+            if not self.flag:
+                continue
+
             # Строки 95-104 об обновлении экрана, всё стирается и рисуется вновь
             self.screen.fill((255, 255, 255))
             self.screen.blit(self.background, (0, 0))
@@ -96,6 +143,7 @@ class FlappyBird:
                                          -1,
                                          (255, 255, 255)),
                              (200, 50))
+
 
             if self.dead:
                 self.sprite = 2 # при смерти замена картинки
@@ -110,9 +158,8 @@ class FlappyBird:
 
             self.updateWalls()
             self.cycle()
+
             pygame.display.update()
 
-
-
-if __name__ == "__main__":
-    FlappyBird().run()
+ex = FlappyBird()
+ex.run()

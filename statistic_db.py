@@ -23,7 +23,7 @@ def times(start_time, set_score, now, subject):
 	# Возвращение существующих статистических данных
 
 	if not score:
-		if set_score > 5:
+		if set_score > 10:
 			wl = 'w'
 		else:
 			wl = 'l'
@@ -96,13 +96,13 @@ def sec_to_hms(object): # Перевод из Seconds в Hours Minutes Seconds
 def return_status(subject): # Возвращает текущего пользователя и всю информацию о нем
 	con = sqlite3.connect("users_statistic.db")
 	cur = con.cursor()
-	print(1)
+
 	user = cur.execute("""SELECT * FROM users
 						WHERE id = 0 """).fetchall()[0][1]
-	print(user)
+
 	log = cur.execute("""SELECT * FROM statistic
 							WHERE (user = @a) and (game = @b )""", (user, subject)).fetchall()
-	print(3)
+
 	return log, user
 
 
@@ -180,3 +180,13 @@ def csv_load(name):
 			con.commit()
 			cur.close()
 			con.close()
+
+def high_score(object, subject):
+		con = sqlite3.connect("users_statistic.db")
+		cur = con.cursor()
+		score = cur.execute("""SELECT * FROM statistic
+								WHERE (user = @name) and (game = @game)""", (object, subject)).fetchall()
+		if score:
+			print(score)
+			score = score[0][3]
+		return score
