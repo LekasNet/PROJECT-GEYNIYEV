@@ -50,7 +50,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Flappy Osipenko</string>
+     <string>Flappy Bird</string>
     </property>
    </widget>
    <widget class="QPushButton" name="ac">
@@ -79,7 +79,7 @@
      <string>Statistic</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="None_statistic">
+   <widget class="QPushButton" name="Flappy_statistic">
     <property name="geometry">
      <rect>
       <x>370</x>

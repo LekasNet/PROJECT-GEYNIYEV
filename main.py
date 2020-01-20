@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QPushButton, QLineEdit, QLabel, QComboBox, QTableWid
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QTableWidget
 from PyQt5.QtGui import QPixmap
 from random import randint
+from flappybird import FlappyBird
 from time import sleep
 from PyQt5 import uic
 from PIL import Image
@@ -12,7 +13,6 @@ import Tetris
 from login import logged
 import sys
 import csv
-from flappybird import FlappyBird
 
 
 class MainWindow(QMainWindow,):
@@ -29,6 +29,7 @@ class MainWindow(QMainWindow,):
 		self.Tetris_start.clicked.connect(self.tetris_game)
 		self.Tetris_statistic.clicked.connect(self.tetris_stat)
 		self.Flappy_start.clicked.connect(self.flappy_game)
+		self.Flappy_statistic.clicked.connect(self.flappy_stat)
 
 		self.user = QLabel(self)
 		self.user_text = QLabel(self)
@@ -52,7 +53,7 @@ class MainWindow(QMainWindow,):
 		self.ret.move(10000, 10000)
 
 		self.Flappy_start.move(10000, 10000)
-		self.None_statistic.move(10000, 10000)
+		self.Flappy_statistic.move(10000, 10000)
 		self.Tetris_start.move(10000, 10000)
 		self.Tetris_statistic.move(10000, 10000)
 		self.ac.move(10000, 10000)
@@ -73,12 +74,122 @@ class MainWindow(QMainWindow,):
 		game = FlappyBird()
 		game.run()
 
+	def flappy_stat(self):
+		subject = "FlappyOsip"
+		self.stats, self.usver = statistic_db.return_status(subject)
+		self.Flappy_start.move(10000, 10000)
+		self.Flappy_statistic.move(10000, 10000)
+		self.Tetris_start.move(10000, 10000)
+		self.Tetris_statistic.move(10000, 10000)
+		self.ac.move(10000, 10000)
+		self.dc.move(10000, 10000)
+		self.ret.move(400, 400)
+		self.ret.clicked.connect(self.main)
+
+		if len(self.stats):
+			print(self.stats)
+			self.window.setText('<html>'
+								'<head/><'
+								'body>'
+								'<p>'
+								'<span style=" font-size:20pt; font-weight:600;"'
+								'>Статистика:<'
+								'/span>'
+								'</p>'
+								'</body>'
+								'</html>')
+			print(6)
+			self.user.setText('<html>'
+							  '<head/><'
+							  'body>'
+							  '<p>'
+							  '<span style=" font-size:12pt; font-weight:600;"'
+							  '>User id:<'
+							  '/span>'
+							  '</p>'
+							  '</body>'
+							  '</html>')
+			self.user.move(100, 100)
+			print(7)
+			self.user_text.setText(str(self.stats[0][0]))
+			print(8)
+			self.user_text.move(400, 100)
+			print(0)
+			self.score.setText('<html>'
+							   '<head/><'
+							   'body>'
+							   '<p>'
+							   '<span style=" font-size:12pt; font-weight:600;"'
+							   '>Max score:<'
+							   '/span>'
+							   '</p>'
+							   '</body>'
+							   '</html>')
+			self.score.move(70, 150)
+			self.score_text.setText(str(self.stats[0][3]))
+			self.score_text.move(400, 150)
+			print(1)
+			self.time.setText('<html>'
+							  '<head/><'
+							  'body>'
+							  '<p>'
+							  '<span style=" font-size:12pt; font-weight:600;"'
+							  '>In game time:<'
+							  '/span>'
+							  '</p>'
+							  '</body>'
+							  '</html>')
+			self.time.move(35, 200)
+			self.time_text.setText(str(self.stats[0][2]))
+			self.time_text.move(400, 200)
+			print(2)
+			self.winRate.setText('<html>'
+								 '<head/><'
+								 'body>'
+								 '<p>'
+								 '<span style=" font-size:12pt; font-weight:600;"'
+								 '>Win rate:<'
+								 '/span>'
+								 '</p>'
+								 '</body>'
+								 '</html>')
+			self.winRate.move(83, 250)
+			self.WinRate_text.setText(str(self.stats[0][4]))
+			self.WinRate_text.move(400, 250)
+			print(3)
+			self.history.setText('<html>'
+								 '<head/><'
+								 'body>'
+								 '<p>'
+								 '<span style=" font-size:12pt; font-weight:600;"'
+								 '>History:<'
+								 '/span>'
+								 '</p>'
+								 '</body>'
+								 '</html>')
+			self.history.move(97, 300)
+			self.history_text.setText(self.stats[0][5])
+			self.history_text.move(400, 300)
+
+			self.update()
+		else:
+			self.window.setText('<html>'
+								'<head/><'
+								'body>'
+								'<p>'
+								'<span style=" font-size:20pt; font-weight:600;"'
+								'>Статистики пока нет(:<'
+								'/span>'
+								'</p>'
+								'</body>'
+								'</html>')
+
 
 	def tetris_stat(self):
 		subject = "Tetris"
 		self.stats, self.usver = statistic_db.return_status(subject)
 		self.Flappy_start.move(10000, 10000)
-		self.None_statistic.move(10000, 10000)
+		self.Flappy_statistic.move(10000, 10000)
 		self.Tetris_start.move(10000, 10000)
 		self.Tetris_statistic.move(10000, 10000)
 		self.ac.move(10000, 10000)
@@ -186,7 +297,7 @@ class MainWindow(QMainWindow,):
 
 	def main(self):
 		self.Flappy_start.move(370, 90)
-		self.None_statistic.move(370, 310)
+		self.Flappy_statistic.move(370, 310)
 		self.Tetris_start.move(160, 90)
 		self.Tetris_statistic.move(160, 310)
 		self.ac.move(590, 90)
