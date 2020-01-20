@@ -160,6 +160,3 @@ class FlappyBird:
             self.cycle()
 
             pygame.display.update()
-
-ex = FlappyBird()
-ex.run()
