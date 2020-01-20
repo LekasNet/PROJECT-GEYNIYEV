@@ -7,7 +7,6 @@ from time import sleep
 from PyQt5 import uic
 from PIL import Image
 import statistic_db
-import LoginDialog
 import sqlite3
 import Tetris
 from login import logged
